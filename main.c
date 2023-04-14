@@ -43,7 +43,7 @@ int main()
         board = nboard;
         nboard = NULL;
         c = getchar();
-    } while(c != 'a');
+    } while(c != 'q');
 
     return 0;
 }

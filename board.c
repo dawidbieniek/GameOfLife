@@ -41,7 +41,7 @@ void writeBoard(Board* board)
     {
         for(int x = 0; x < board->w; x++)
         {
-            printf("%d ", getCell(x, y, board));
+            printf("%c ", getCell(x, y, board) ? 'o' : '.');
         }
         printf("\n");
     }
