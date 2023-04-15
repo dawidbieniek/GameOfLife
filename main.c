@@ -2,30 +2,20 @@
 #include "rules.h"
 #include "board.h"
 #include "simulation.h"
+#include "gameThread.h"
 
 #include <ncurses.h>
-#include <unistd.h>
-// #include <pthread>
 
-// void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep)
-// {
-//     Board* buffer;
-
-//     buffer = stepSimulation(board, ruleset);
-//     (*simStep)++;   // TODO: Może to w print
-//     board = buffer;
-//     buffer = NULL;
-
-//     mvprintw(2, 0, "Simulation step: %d", *simStep);
-//     refresh();
-//     updateBoardWindow(board, boardWindow);
-//     wrefresh(boardWindow);
-// }
-
-typedef struct
-{
-    int id;
-} threadArgs;
+void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep)
+{    
+    stepSimulation(board, ruleset);
+    (*simStep)++;
+    
+    mvprintw(2, 0, "Simulation step: %d", *simStep);
+    refresh();
+    updateBoardWindow(board, boardWindow);
+    wrefresh(boardWindow);
+}
 
 int main()
 {
@@ -66,21 +56,31 @@ int main()
     updateBoardWindow(board, boardWindow);
     wrefresh(boardWindow);
 
+    startGameThread(&nextSimulationStep, board, ruleset, boardWindow, &simStep);
+    pauseGameThread();
+   
     while((ch = getch()) != 'q')
     {
-        // nextSimulationStep(board, ruleset, boardWindow, &simStep);
-        
-        stepSimulation(board, ruleset);
-        simStep++;
-        
-        mvprintw(2, 0, "Simulation step: %d", simStep);
         refresh();
-        updateBoardWindow(board, boardWindow);
-        wrefresh(boardWindow);
+    
+        switch(ch)
+        {
+            case 'a':
+                resumeGameThread();
+                break;
+            case 's':
+                pauseGameThread();
+                break;
+            case 'd':
+                nextSimulationStep(board, ruleset, boardWindow, &simStep);
+                break;
+        }
     }
 
     // ## END ##
     endwin();
+
+    destroyGameThread();
 
     return 0;
 }
