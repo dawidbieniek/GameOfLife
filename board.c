@@ -1,8 +1,8 @@
 #include "board.h"
 
+#include <ncurses.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 
 void clearBoard(Board* board)
 {
@@ -47,15 +47,32 @@ void writeBoard(Board* board)
     }
     
 }
-// WINDOW* createBoardWindow(Board* board)
-// {
 
-// }
+WINDOW* createBoardWindow(Board* board, int x, int y)
+{
+#ifdef WIDE_MODE
+    return newwin(board->h+2, (board->w*2)+2, y, x);
+#else
+    return newwin(board->h+2, board->w+2, y, x);
+#endif
+}
 
-// void updateBoardWindow(Board* board, WINDOW* window)
-// {
-
-// }
+void updateBoardWindow(Board* board, WINDOW* window)
+{
+    for(int y = 0; y < board->h; y++)
+    {
+        wmove(window, y+1, 1);
+        for(int x = 0; x < board->w; x++)
+        {
+#ifdef WIDE_MODE
+            wprintw(window, "%c ", getCell(x, y, board) ? 'o' : '.');
+#else
+            wprintw(window, "%c", getCell(x, y, board) ? 'o' : '.');
+#endif
+        }
+    }
+    box(window, 0, 0);
+}
 
 void destroyBoard(Board* board)
 {

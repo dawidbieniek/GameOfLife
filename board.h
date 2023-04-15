@@ -1,6 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <ncurses.h>
+
 typedef struct {
     int* cells;
     int w;
@@ -21,6 +23,12 @@ int getCell(int x, int y, Board* board);
 
 // TMP
 void writeBoard(Board* board);
+
+// Creates new virtual window for board
+WINDOW* createBoardWindow(Board* board, int x, int y);
+
+// Draws board on window
+void updateBoardWindow(Board* board, WINDOW* window);
 
 // Clears memory of board
 void destroyBoard(Board* board);

@@ -1,2 +1,2 @@
 main:
-	gcc main.c rules.c board.c simulation.c -lncurses
+	gcc main.c rules.c board.c simulation.c -lncurses -DWIDE_MODE
