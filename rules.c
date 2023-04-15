@@ -74,7 +74,7 @@ Ruleset* parseRules(char* rules)
 char* rulesetToString(Ruleset* ruleset)
 {
     int nextChar = 0;
-    char* rules = malloc(sizeof(char) * 17);
+    char* rules = calloc(18, sizeof(char));     // 8 alive-alive + 1 '/' + 8 dead-alive + 1 '\0'
 
     for(int i = 0; i < 8; i++)
     {

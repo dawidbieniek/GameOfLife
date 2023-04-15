@@ -6,26 +6,41 @@
 
 #include <ncurses.h>
 
-void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep)
+
+void printSimulationInfo(int simStep, int gameState)
+{
+    mvprintw(0, 0, "Press q to exit");
+    mvprintw(2, 0, "Simulation state: %s", gameState ? "playing" : "paused");
+    mvprintw(3, 0, "Simulation step: %d", simStep);
+    refresh();
+}
+
+void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep, int* gameState)
 {    
+    if(!(*gameState))
+    {
+        (*gameState) = 1;
+    }
+
     stepSimulation(board, ruleset);
     (*simStep)++;
-    
-    mvprintw(2, 0, "Simulation step: %d", *simStep);
-    refresh();
+
+    printSimulationInfo(*simStep, *gameState);
     updateBoardWindow(board, boardWindow);
     wrefresh(boardWindow);
 }
 
+
 int main()
 {
-    int boardW = 10;
-    int boardH = 10;
+    int boardW = 50;
+    int boardH = 50;
 
     WINDOW* boardWindow;
     char ch;
     
     int simStep = 0;
+    int simState = 0;
     Board* board;
     Ruleset* ruleset;
 
@@ -47,18 +62,16 @@ int main()
     curs_set(0);        // Hides cursor
     // nodelay(stdscr, 1); // Disables lock for getch()
 
-    boardWindow = createBoardWindow(board, 0, 3);
+    boardWindow = createBoardWindow(board, 0, 4);
 
-    printw("Press q to exit");
-    mvprintw(2, 0, "Simulation step: %d", simStep);
-    refresh();
+    printSimulationInfo(simStep, simState);
 
     updateBoardWindow(board, boardWindow);
     wrefresh(boardWindow);
 
-    startGameThread(&nextSimulationStep, board, ruleset, boardWindow, &simStep);
+    startGameThread(&nextSimulationStep, board, ruleset, boardWindow, &simStep, &simState);
     pauseGameThread();
-   
+
     while((ch = getch()) != 'q')
     {
         refresh();
@@ -72,7 +85,7 @@ int main()
                 pauseGameThread();
                 break;
             case 'd':
-                nextSimulationStep(board, ruleset, boardWindow, &simStep);
+                nextSimulationStep(board, ruleset, boardWindow, &simStep, &simState);
                 break;
         }
     }

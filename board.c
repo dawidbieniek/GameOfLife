@@ -15,11 +15,9 @@ void clearBoard(Board* board)
 Board* createBoard(int w, int h)
 {
     Board* board = malloc(sizeof(Board));
-    board->cells = malloc(sizeof(int) * w * h);
+    board->cells = calloc(w * h, sizeof(int));
     board->w = w;
     board->h = h;
-
-    clearBoard(board);
 
     return board;
 }

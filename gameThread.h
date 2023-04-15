@@ -4,17 +4,8 @@
 #include "rules.h"
 #include "board.h"
 
-// TMP
-// struct threadArgs
-// {
-//     Board* board;
-//     Ruleset* ruleset;
-//     WINDOW* boardWindow;
-//     int* simStep;
-// };
-
 // Creates game thread and starts it
-void startGameThread(void (*threadFunction)(Board*, Ruleset*, WINDOW*, int*), Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep);
+void startGameThread(void (*threadFunction)(Board*, Ruleset*, WINDOW*, int*, int*), Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep, int* simState);
 
 // Unpauses game thread
 void resumeGameThread();
@@ -25,5 +16,9 @@ void pauseGameThread();
 // Awaits resume of game thread. If thread is not paused, does nothing
 void awaitResumed();
 
+// Sets the duration of sleep after each loop
+void setSleepDuration(int mseconds);
+
+// Destroys game thread and mutexes
 void destroyGameThread();
 #endif
