@@ -70,13 +70,9 @@ int main()
     {
         // nextSimulationStep(board, ruleset, boardWindow, &simStep);
         
-        Board* buffer;
-
-        buffer = stepSimulation(board, ruleset);
+        stepSimulation(board, ruleset);
         simStep++;
-        board = buffer;
-        buffer = NULL;
-
+        
         mvprintw(2, 0, "Simulation step: %d", simStep);
         refresh();
         updateBoardWindow(board, boardWindow);

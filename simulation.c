@@ -38,11 +38,21 @@ int getNeighbourCount(int x, int y, Board* board)
 
     return neighbours;
 }
-
-Board* stepSimulation(Board* board, Ruleset* ruleset)
+// NOTE: Using another board for storing neighbours allows to avoid using board buffers and changing pointers
+void stepSimulation(Board* board, Ruleset* ruleset)
 {
-    Board* newBoard = createBoard(board->w, board->h);
+    Board* neighbourBoard = createBoard(board->w, board->h);    // Im using board to store neighbour count
+    
+    // Count number of neighbours for each cell in original board
+    for(int y = 0; y < board->h; y++)
+    {
+        for(int x = 0; x < board->w; x++)
+        {
+            setCell(x, y, getNeighbourCount(x, y, board), neighbourBoard);
+        }
+    }
 
+    // Update board state based on number of neighbours
     for(int y = 0; y < board->h; y++)
     {
         for(int x = 0; x < board->w; x++)
@@ -50,12 +60,10 @@ Board* stepSimulation(Board* board, Ruleset* ruleset)
             setCell(x, y, 
                 nextCellState(ruleset, 
                     getCell(x, y, board), 
-                    getNeighbourCount(x, y, board)), 
-                newBoard);
+                    getCell(x, y, neighbourBoard)), 
+                board);
         }
     }
 
-    destroyBoard(board);
-
-    return newBoard;
+    destroyBoard(neighbourBoard);
 }

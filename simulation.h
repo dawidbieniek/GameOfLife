@@ -4,7 +4,7 @@
 #include "board.h"
 #include "rules.h"
 
-// Creates new board from old after 1 simulation step. Old board is destoryed
-Board* stepSimulation(Board* board, Ruleset* ruleset);
+// Updates values of cells in board to their next state in simulation
+void stepSimulation(Board* board, Ruleset* ruleset);
 
 #endif
