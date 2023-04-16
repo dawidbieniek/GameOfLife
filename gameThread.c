@@ -25,7 +25,7 @@ pthread_mutex_t suspendedMutex;
 int isSuspended;
 pthread_cond_t resumeCondition;
 
-int sleepUs = 1000;
+int sleepUs = 1000000;
 
 void* gameThreadFunction(void* functionArgs)
 {

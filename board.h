@@ -27,7 +27,7 @@ void writeBoard(Board* board);
 // Creates new virtual window for board
 WINDOW* createBoardWindow(Board* board, int x, int y);
 
-// Draws board on window
+// Draws board on window. Draws window on screen
 void updateBoardWindow(Board* board, WINDOW* window);
 
 // Clears memory of board

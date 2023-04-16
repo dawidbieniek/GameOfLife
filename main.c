@@ -3,8 +3,12 @@
 #include "board.h"
 #include "simulation.h"
 #include "gameThread.h"
+#include "gameMenu.h"
 
+#include <stdlib.h>
+#include <string.h>
 #include <ncurses.h>
+#include <menu.h>
 
 
 void printSimulationInfo(int simStep, int gameState)
@@ -16,7 +20,7 @@ void printSimulationInfo(int simStep, int gameState)
 }
 
 void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep, int* gameState)
-{    
+{
     if(!(*gameState))
     {
         (*gameState) = 1;
@@ -27,18 +31,19 @@ void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int
 
     printSimulationInfo(*simStep, *gameState);
     updateBoardWindow(board, boardWindow);
-    wrefresh(boardWindow);
 }
-
 
 int main()
 {
-    int boardW = 50;
-    int boardH = 50;
+    int boardW = 20;
+    int boardH = 20;
+    int wrap = 0;
 
     WINDOW* boardWindow;
-    char ch;
-    
+    WINDOW* menuWindow;
+
+    int ch;
+
     int simStep = 0;
     int simState = 0;
     Board* board;
@@ -60,22 +65,24 @@ int main()
     cbreak();           // Allow window to get keyboard input
     keypad(stdscr, 1);  // Enable input of special keys
     curs_set(0);        // Hides cursor
-    // nodelay(stdscr, 1); // Disables lock for getch()
-
-    boardWindow = createBoardWindow(board, 0, 4);
+    nodelay(stdscr, 1); // Disables lock for getch()
 
     printSimulationInfo(simStep, simState);
 
+    boardWindow = createBoardWindow(board, 0, 4);
+    menuWindow = createMenuWindow(60, 4);
+
     updateBoardWindow(board, boardWindow);
-    wrefresh(boardWindow);
+    updateMenuWindow(menuWindow);
 
     startGameThread(&nextSimulationStep, board, ruleset, boardWindow, &simStep, &simState);
     pauseGameThread();
 
     while((ch = getch()) != 'q')
-    {
-        refresh();
-    
+    {    
+        handleMenuInput(ch);
+        updateMenuWindow(menuWindow);
+
         switch(ch)
         {
             case 'a':

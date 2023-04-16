@@ -55,6 +55,7 @@ WINDOW* createBoardWindow(Board* board, int x, int y)
 #endif
 }
 
+// TODO: Pozbyć się zwracanego WINDOW, wszystko przechować globalnie w tym pliku
 void updateBoardWindow(Board* board, WINDOW* window)
 {
     for(int y = 0; y < board->h; y++)
@@ -70,6 +71,7 @@ void updateBoardWindow(Board* board, WINDOW* window)
         }
     }
     box(window, 0, 0);
+    wrefresh(window);
 }
 
 void destroyBoard(Board* board)
