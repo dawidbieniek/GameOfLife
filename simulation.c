@@ -3,18 +3,36 @@
 #include "board.h"
 #include "rules.h"
 
+int boardWrapping = 0;
+
 int clampX(int x, Board* board)
 {
-    if(x < 0) return 0;
-    if(x >= board->w) return board->w - 1;
+    if(boardWrapping)
+    {
+        if(x < 0) return board->w + x;
+        if(x >= board->w) return x - board->w;
+    }
+    else
+    {
+        if(x < 0) return 0;
+        if(x >= board->w) return board->w - 1;
+    }
 
     return x;
 }
 
 int clampY(int y, Board* board)
 {
-    if(y < 0) return 0;
-    if(y >= board->h) return board->h - 1;
+    if(boardWrapping)
+    {
+        if(y < 0) return board->h + y;
+        if(y >= board->h) return y - board->h;
+    }
+    else
+    {
+        if(y < 0) return 0;
+        if(y >= board->h) return board->h - 1;
+    }
 
     return y;
 }
@@ -23,13 +41,13 @@ int getNeighbourCount(int x, int y, Board* board)
 {
     int neighbours = 0;
 
-    for(int j = clampY(y - 1, board); j <= clampY(y + 1, board); j++)
+    for(int j = y - 1; j <= y + 1; j++)
     {
-        for(int i = clampX(x - 1, board); i <= clampX(x + 1, board); i++)
+        for(int i = x - 1; i <= x + 1; i++)
         {
             if(i == x && j == y) continue;
 
-            if(getCell(i, j, board))
+            if(getCell(clampX(i, board), clampY(j, board), board))
             {
                 neighbours++;
             }
@@ -67,4 +85,9 @@ void stepSimulation(Board* board, Ruleset* ruleset)
     }
 
     destroyBoard(neighbourBoard);
+}
+
+void setWrapping(int value)
+{
+    boardWrapping = value;
 }

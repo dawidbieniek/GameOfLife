@@ -79,7 +79,7 @@ WINDOW* createBoardWindow(Board* board, int x, int y)
 void resizeBoardWindow(WINDOW* window, int w, int h)
 {
     werase(window);
-    
+    wrefresh(window);
 #ifdef WIDE_MODE
     wresize(window, h+2, (w*2)+2);   // +2 for border
 #else

@@ -51,22 +51,22 @@ void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int
 
 void toggleSimulation()
 {
+    simState = !simState;
+    printSimulationInfo(simStep, simState);
+
     if(simState)
     {
-        simState = 0;
-        printSimulationInfo(simStep, simState);
-        pauseGameThread();
+        resumeGameThread();
     }
     else
     {
-        simState = 1;
-        printSimulationInfo(simStep, simState);
-        resumeGameThread();
+        pauseGameThread();
     }
 }
 
 void oneStepSimulation()
 {
+    //TODO: Zamiast tego, powinien być blok w menu
     if(!simState)
     {
         nextSimulationStep(board, ruleset, boardWindow, &simStep, &simState);
@@ -124,6 +124,27 @@ int handleMenuPress(int menuOpt)
                 setBoardH(newH);
                 pthread_mutex_unlock(&refreshMutex);
             }
+            break;
+        case 4:     // Toggle wrapping
+            wrap = !wrap;
+            mvprintw(50,0,"%d", wrap);
+            setWrapping(wrap);
+            break;
+        case 5:     // Set cell
+            break;
+        case 6:     // Clear cell
+            break;
+        case 7:     // Clear board
+            clearBoard(board);
+            updateBoardWindow(board, boardWindow);
+            break;
+        case 8:     // Set sim speed
+            break;
+        case 9:     // Set rules
+            break;
+        case 10:    // Save board
+            break;
+        case 11:    // Load board
             break;
         case 12:    // Exit
             return 1;
