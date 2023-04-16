@@ -22,6 +22,27 @@ Board* createBoard(int w, int h)
     return board;
 }
 
+void resizeBoard(Board* board, int w, int h)
+{
+    int* newCells = calloc(w * h, sizeof(int));
+
+    int maxY = board->h > h ? h : board->h;
+    int maxX = board->w > w ? w : board->w;
+
+    for(int y = 0; y < maxY; y++)
+    {
+        for(int x = 0; x < maxX; x++)
+        {
+            newCells[y * w + x] = getCell(x, y, board);
+        }
+    }
+
+    free(board->cells);
+    board->cells = newCells;
+    board->h = h;
+    board->w = w;
+}
+
 void setCell(int x, int y, int value, Board* board)
 {
     board->cells[y * board->w + x] = value;
@@ -52,6 +73,17 @@ WINDOW* createBoardWindow(Board* board, int x, int y)
     return newwin(board->h+2, (board->w*2)+2, y, x);
 #else
     return newwin(board->h+2, board->w+2, y, x);
+#endif
+}
+
+void resizeBoardWindow(WINDOW* window, int w, int h)
+{
+    werase(window);
+    
+#ifdef WIDE_MODE
+    wresize(window, h+2, (w*2)+2);   // +2 for border
+#else
+    wresize(window, h+2, w+2);   // +2 for border
 #endif
 }
 

@@ -2,8 +2,8 @@
 
 #include "rules.h"
 #include "board.h"
-
 #include <pthread.h>
+
 #include <unistd.h>
 
 Board* boardRef;
@@ -20,6 +20,7 @@ void (*loopedFunction)(Board*, Ruleset*, WINDOW*, int*, int*);
 pthread_mutex_t suspendedMutex;
 int isSuspended;
 pthread_cond_t resumeCondition;
+pthread_mutex_t refreshMutexRef;
 
 int sleepUs = 100000;
 
@@ -34,9 +35,10 @@ void* gameThreadFunction()
     }
 }
 
-void startGameThread(void (*threadFunction)(Board*, Ruleset*, WINDOW*, int*, int*), Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep, int* simState)
+pthread_mutex_t startGameThread(void (*threadFunction)(Board*, Ruleset*, WINDOW*, int*, int*), Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep, int* simState)
 { 
-    pthread_mutex_init(&suspendedMutex, NULL);
+    pthread_mutex_init(&suspendedMutex, NULL);    
+    pthread_mutex_init(&refreshMutexRef, NULL);
 
     loopedFunction = threadFunction;
 
@@ -46,6 +48,8 @@ void startGameThread(void (*threadFunction)(Board*, Ruleset*, WINDOW*, int*, int
     simStepRef = simStep;
     simStateRef = simState;
     pthread_create(&gameThread, NULL, gameThreadFunction, NULL);
+
+    return refreshMutexRef;
 }
 
 void resumeGameThread()

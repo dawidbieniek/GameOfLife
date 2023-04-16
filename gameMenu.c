@@ -10,7 +10,7 @@ int selectedItemIndex = 0;
 
 WINDOW* createMenuWindow(int x, int y)
 {
-    WINDOW* menuWindow= newwin(13, 25, y, x);
+    WINDOW* menuWindow= newwin(13, 30, y, x);
 
     ITEM** items = calloc(14, sizeof(ITEM*));
     items[0] = new_item(" ", "Start [p]");
@@ -41,6 +41,7 @@ WINDOW* createMenuWindow(int x, int y)
     return menuWindow;
 }
 
+// TODO: delete
 void updateMenuWindow(WINDOW* window)
 {
     wrefresh(window);
@@ -51,22 +52,31 @@ int handleMenuInput(WINDOW* window, int ch)
     switch(ch)
     {
         case KEY_DOWN:
-            menu_driver(menu, REQ_DOWN_ITEM);
-            if(selectedItemIndex < 1)
+            if(selectedItemIndex++ < 12)
             {
-                selectedItemIndex++;
+                menu_driver(menu, REQ_DOWN_ITEM);
+            }
+            else
+            {
+                selectedItemIndex = 0;
+                menu_driver(menu, REQ_FIRST_ITEM);
             }
             wrefresh(window);
             break;
         case KEY_UP:
-            menu_driver(menu, REQ_UP_ITEM);
-            if(selectedItemIndex > 0)
+            if(selectedItemIndex-- > 0)
             {
-                selectedItemIndex--;
+                menu_driver(menu, REQ_UP_ITEM);
+            }
+            else
+            {
+                selectedItemIndex = 12;
+                menu_driver(menu, REQ_LAST_ITEM);
             }
             wrefresh(window);
             break;
         case ' ':
+        // case KEY_ENTER:
             return selectedItemIndex;
     }
 
