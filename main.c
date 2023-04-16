@@ -127,7 +127,6 @@ int handleMenuPress(int menuOpt)
             break;
         case 4:     // Toggle wrapping
             wrap = !wrap;
-            mvprintw(50,0,"%d", wrap);
             setWrapping(wrap);
             break;
         case 5:     // Set cell
@@ -139,8 +138,20 @@ int handleMenuPress(int menuOpt)
             updateBoardWindow(board, boardWindow);
             break;
         case 8:     // Set sim speed
+            showInputWindow(inputWindow, "Set simulation speed (0.5-10)");
+            input = handleInputWindowInput(inputWindow);
+            float speed = atof(input);
+
+            if(speed >= 0.5 && speed <= 10.0)
+            {
+                setSleepDuration(1000.0/speed);
+            }
             break;
         case 9:     // Set rules
+            showInputWindow(inputWindow, "Set rules (a->a/d->a)");
+            input = handleInputWindowInput(inputWindow);
+            
+            parseRules(input, ruleset);
             break;
         case 10:    // Save board
             break;
@@ -165,7 +176,8 @@ int main()
     setCell(5,6,1,board);
     setCell(6,7,1,board);
 
-    ruleset = parseRules("23/3");   // Standard rules
+    ruleset = createEmptyRuleset();
+    parseRules("23/3", ruleset);   // Standard rules
 
     initscr();
     // ## START ##

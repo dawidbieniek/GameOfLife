@@ -8,13 +8,13 @@ typedef struct
 } Ruleset;
 
 // Creates new ruleset and fills it with 0s
-Ruleset* initRuleset();
+Ruleset* createEmptyRuleset();
 
 // Checks if string is in correct format
 int validateRules(char* rules);
 
-// Creates ruleset from string. Null if error
-Ruleset* parseRules(char* rules);
+// Parses rules and sets ruleset according to input string
+void parseRules(char* rules, Ruleset* ruleset);
 
 // Creates string from ruleset
 char* rulesetToString(Ruleset* ruleset);

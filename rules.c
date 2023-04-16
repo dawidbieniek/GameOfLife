@@ -3,8 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-
-Ruleset* initRuleset()
+Ruleset* createEmptyRuleset()
 {
     Ruleset* rules = malloc(sizeof(Ruleset));
 
@@ -43,11 +42,15 @@ int validateRules(char* rules)
     return 1;
 }
 
-Ruleset* parseRules(char* rules)
+void parseRules(char* rules, Ruleset* ruleset)
 {
-    if(!validateRules(rules)) return NULL;
+    if(!validateRules(rules)) return;
 
-    Ruleset* ruleset = initRuleset();
+    for(int i = 0; i < 8; i++)
+    {
+        ruleset->aliveToAlive[i] = 0;
+        ruleset->deadToAlive[i] = 0;
+    }
 
     int beforeSlash = 1;
     for(int i = 0; i < strlen(rules); i++)
@@ -67,8 +70,6 @@ Ruleset* parseRules(char* rules)
             ruleset->deadToAlive[rules[i] - '0'] = 1;
         }
     }
-
-    return ruleset;
 }
 
 char* rulesetToString(Ruleset* ruleset)
