@@ -46,7 +46,7 @@ void updateMenuWindow(WINDOW* window)
     wrefresh(window);
 }
 
-int handleMenuInput(int ch)
+int handleMenuInput(WINDOW* window, int ch)
 {
     switch(ch)
     {
@@ -56,6 +56,7 @@ int handleMenuInput(int ch)
             {
                 selectedItemIndex++;
             }
+            wrefresh(window);
             break;
         case KEY_UP:
             menu_driver(menu, REQ_UP_ITEM);
@@ -63,6 +64,7 @@ int handleMenuInput(int ch)
             {
                 selectedItemIndex--;
             }
+            wrefresh(window);
             break;
         case ' ':
             return selectedItemIndex;

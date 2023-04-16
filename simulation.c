@@ -38,6 +38,7 @@ int getNeighbourCount(int x, int y, Board* board)
 
     return neighbours;
 }
+
 // NOTE: Using another board for storing neighbours allows to avoid using board buffers and changing pointers
 void stepSimulation(Board* board, Ruleset* ruleset)
 {

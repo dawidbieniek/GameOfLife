@@ -5,6 +5,7 @@
 #include "gameThread.h"
 #include "gameMenu.h"
 
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ncurses.h>
@@ -80,8 +81,7 @@ int main()
 
     while((ch = getch()) != 'q')
     {    
-        handleMenuInput(ch);
-        updateMenuWindow(menuWindow);
+        handleMenuInput(menuWindow, ch);
 
         switch(ch)
         {
@@ -95,6 +95,9 @@ int main()
                 nextSimulationStep(board, ruleset, boardWindow, &simStep, &simState);
                 break;
         }
+
+        // Added some delay to slow down while loop when getch is set to not block thread
+        usleep(1000);
     }
 
     // ## END ##

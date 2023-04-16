@@ -6,18 +6,14 @@
 #include <pthread.h>
 #include <unistd.h>
 
-struct threadArgs
-{
-    Board* board;
-    Ruleset* ruleset;
-    WINDOW* boardWindow;
-    int* simStep;
-    int* simState;
-};
+Board* boardRef;
+Ruleset* rulesetRef;
+WINDOW* boardWindowRef;
+int* simStepRef;
+int* simStateRef;
 
 // Thread
 pthread_t gameThread;
-struct threadArgs gameThreadArgs;
 void (*loopedFunction)(Board*, Ruleset*, WINDOW*, int*, int*);
 
 // Mutexes
@@ -25,23 +21,16 @@ pthread_mutex_t suspendedMutex;
 int isSuspended;
 pthread_cond_t resumeCondition;
 
-int sleepUs = 1000000;
+int sleepUs = 100000;
 
-void* gameThreadFunction(void* functionArgs)
+void* gameThreadFunction()
 {
-    struct threadArgs* args = (struct threadArgs*)functionArgs;
-    Board* board = args->board;
-    Ruleset* ruleset = args->ruleset;
-    WINDOW* boardWindow = args->boardWindow;
-    int* simStep = args->simStep;
-    int* simState = args->simState;
-
     refresh();
     while(1)
     {
         usleep(sleepUs);
         awaitResumed();
-        loopedFunction(board, ruleset, boardWindow, simStep, simState);
+        loopedFunction(boardRef, rulesetRef, boardWindowRef, simStepRef, simStateRef);
     }
 }
 
@@ -51,12 +40,12 @@ void startGameThread(void (*threadFunction)(Board*, Ruleset*, WINDOW*, int*, int
 
     loopedFunction = threadFunction;
 
-    gameThreadArgs.board = board;
-    gameThreadArgs.ruleset = ruleset;
-    gameThreadArgs.boardWindow = boardWindow;
-    gameThreadArgs.simStep = simStep;
-    gameThreadArgs.simState = simState;
-    pthread_create(&gameThread, NULL, gameThreadFunction, &gameThreadArgs);
+    boardRef = board;
+    rulesetRef = ruleset;
+    boardWindowRef = boardWindow;
+    simStepRef = simStep;
+    simStateRef = simState;
+    pthread_create(&gameThread, NULL, gameThreadFunction, NULL);
 }
 
 void resumeGameThread()
