@@ -5,14 +5,27 @@
 #include <stdlib.h>
 #include <menu.h>
 
+const int lockableOptions[] = 
+{
+    1,      // Step
+    2,      // Set width
+    3,      // Set height
+    5,      // Set cell to alive
+    6,      // Set cell to dead
+    9,      // Set rules
+    10,     // Save board
+    11      // Load board
+};
+
 MENU* menu;
+ITEM** items;
 int selectedItemIndex = 0;
 
 WINDOW* createMenuWindow(int x, int y)
 {
     WINDOW* menuWindow= newwin(13, 30, y, x);
 
-    ITEM** items = calloc(14, sizeof(ITEM*));
+    items = calloc(14, sizeof(ITEM*));
     items[0] = new_item(" ", "Start [p]");
     items[1] = new_item(" ", "Step [n]");
     items[2] = new_item(" ", "Set width");
@@ -29,6 +42,8 @@ WINDOW* createMenuWindow(int x, int y)
     items[13] = NULL;
 
     menu = new_menu(items);
+
+    set_menu_grey(menu, COLOR_PAIR(1));
 
     set_menu_win(menu, menuWindow);
     set_menu_sub(menu, derwin(menuWindow, 13, 25, 0, 0));
@@ -81,4 +96,39 @@ int handleMenuInput(WINDOW* window, int ch)
     }
 
     return -1;
+}
+
+void lockMenuOptions(WINDOW* window, int lock)
+{
+    if(lock)
+    {
+        for(int i = 0; i < 8; i++)
+        {
+            item_opts_off(items[lockableOptions[i]], O_SELECTABLE);
+        }
+    }
+    else
+    {
+        for(int i = 0; i < 8; i++)
+        {
+            item_opts_on(items[lockableOptions[i]], O_SELECTABLE);
+        }
+    }
+    wrefresh(window);
+}
+
+int isMenuOptionAviable(int menuOpt, int simState)
+{
+    if(simState)
+    {
+        for(int i = 0; i < 8; i++)
+        {
+            if(lockableOptions[i] == menuOpt)
+            {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
 }

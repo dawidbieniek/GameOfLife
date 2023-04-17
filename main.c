@@ -56,10 +56,12 @@ void toggleSimulation()
 
     if(simState)
     {
+        lockMenuOptions(menuWindow, 1);
         resumeGameThread();
     }
     else
     {
+        lockMenuOptions(menuWindow, 0);
         pauseGameThread();
     }
 }
@@ -91,6 +93,11 @@ void setBoardH(int newH)
 
 int handleMenuPress(int menuOpt)
 {
+    if(!isMenuOptionAviable(menuOpt, simState))
+    {
+        return 0;
+    }
+
     char* input;
     switch(menuOpt)
     {
@@ -181,11 +188,14 @@ int main()
 
     initscr();
     // ## START ##
+    start_color();      // TODO: check if can use color
     noecho();           // Disable printing of pressed characters in window
     cbreak();           // Disables line buffering
     keypad(stdscr, 1);  // Enable input of special keys
     curs_set(0);        // Hides cursor
     nodelay(stdscr, 1); // Disables lock for getch()
+
+    init_pair(1, 8, 0); // Color for unselectable menu items
 
     printSimulationInfo(simStep, simState);
 
@@ -213,10 +223,10 @@ int main()
         switch(ch)
         {
             case 'p':
-                toggleSimulation();
+                handleMenuPress(0);
                 break;
             case 'n':
-                oneStepSimulation();
+                handleMenuPress(1);
                 break;
         }
 
