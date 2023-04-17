@@ -16,7 +16,6 @@
 
 pthread_mutex_t refreshMutex;
 
-
 int boardW = 20;
 int boardH = 20;
 int wrap = 0;
@@ -118,6 +117,10 @@ int handleMenuPress(int menuOpt)
                 setBoardW(newW);
                 pthread_mutex_unlock(&refreshMutex);
             }
+            else
+            {
+                showError(inputWindow, "Wrong input value");
+            }
 
             break;
         case 3:     // Set height
@@ -130,6 +133,10 @@ int handleMenuPress(int menuOpt)
                 pthread_mutex_lock(&refreshMutex);
                 setBoardH(newH);
                 pthread_mutex_unlock(&refreshMutex);
+            }
+            else
+            {
+                showError(inputWindow, "Wrong input value");
             }
             break;
         case 4:     // Toggle wrapping
@@ -153,12 +160,23 @@ int handleMenuPress(int menuOpt)
             {
                 setSleepDuration(1000.0/speed);
             }
+            else
+            {
+                showError(inputWindow, "Wrong input value");
+            }
             break;
         case 9:     // Set rules
             showInputWindow(inputWindow, "Set rules (a->a/d->a)");
             input = handleInputWindowInput(inputWindow);
             
-            parseRules(input, ruleset);
+            if(!validateRules(input))
+            {
+                showError(inputWindow, "Wrong input value");
+            }
+            else
+            {
+                parseRules(input, ruleset);
+            }
             break;
         case 10:    // Save board
             break;
@@ -194,8 +212,11 @@ int main()
     keypad(stdscr, 1);  // Enable input of special keys
     curs_set(0);        // Hides cursor
     nodelay(stdscr, 1); // Disables lock for getch()
+    
+    nodelay(inputWindow, 0); // Enables lock for getch() for input window
 
     init_pair(1, 8, 0); // Color for unselectable menu items
+    init_pair(2, 1, 0); // Color for error message
 
     printSimulationInfo(simStep, simState);
 
@@ -210,7 +231,7 @@ int main()
     pauseGameThread();
 
     while((ch = getch()) != 'q')
-    {    
+    {
         menuOpt = handleMenuInput(menuWindow, ch);
         if(menuOpt > -1)
         {

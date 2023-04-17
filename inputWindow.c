@@ -26,17 +26,30 @@ void hideInputWindow(WINDOW* window)
 
 char* handleInputWindowInput(WINDOW* window)
 {
-    nodelay(stdscr, 0); // Enables lock for getch()
     echo();             // Enables printing of pressed characters in window
     nocbreak();         // Enables line buffering
 
     char* c = malloc(sizeof(char) * 50);
     wgetnstr(window, c, 50);
 
-    nodelay(stdscr, 1); // Disables lock for getch()
     noecho();           // Disable printing of pressed characters in window
     cbreak();           // Disables line buffering
     hideInputWindow(window);
 
     return c;
+}
+
+void showMessage(WINDOW* window, char* message)
+{
+    mvwprintw(window, 0, 0, "%s", message);
+    wrefresh(window);
+}
+
+void showError(WINDOW* window, char* message)
+{
+    wattron(window, COLOR_PAIR(2) | A_BOLD);
+    showMessage(window, message);
+    wattroff(window, COLOR_PAIR(2) | A_BOLD);
+    wgetch(window);
+    hideInputWindow(window);
 }
