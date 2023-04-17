@@ -1,8 +1,11 @@
 #include "board.h"
 
 #include <ncurses.h>
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+#include <string.h>
 
 void clearBoard(Board* board)
 {
@@ -24,6 +27,8 @@ Board* createBoard(int w, int h)
 
 void resizeBoard(Board* board, int w, int h)
 {
+    if(w == board->w && h == board->h) return;
+
     int* newCells = calloc(w * h, sizeof(int));
 
     int maxY = board->h > h ? h : board->h;
@@ -55,16 +60,14 @@ int getCell(int x, int y, Board* board)
 
 void writeBoard(Board* board)
 {
-    printf("%d x %d\n", board->w, board->h);
     for(int y = 0; y < board->h; y++)
     {
         for(int x = 0; x < board->w; x++)
         {
-            printf("%c ", getCell(x, y, board) ? 'o' : '.');
+            mvprintw(y+40, x, "%c ", getCell(x, y, board) ? 'o' : '.');
         }
-        printf("\n");
     }
-    
+    refresh();
 }
 
 WINDOW* createBoardWindow(Board* board, int x, int y)
@@ -104,6 +107,72 @@ void updateBoardWindow(Board* board, WINDOW* window)
     }
     box(window, 0, 0);
     wrefresh(window);
+}
+
+int saveBoard(Board* board, char* path)
+{
+    FILE* file = fopen(path, "w");
+    if(file == NULL)
+    {
+        return 0;
+    }
+
+    fprintf(file, "%d %d\n", board->w, board->h);
+
+    for(int i = 0; i < board->h; i++)
+    {
+        for(int x = 0; x < board->w; x++)
+        {
+            fputc(getCell(x, i, board) + '0', file);
+        }
+        fputc('\n', file);
+    }
+
+    fclose(file);
+
+    return 1;
+}
+
+int loadBoard(Board* board, char* path)
+{
+    FILE* file = fopen(path, "r");
+    if(file == NULL)
+    {
+        return 0;
+    }
+    
+    char* line;
+
+    int w, h;
+    fscanf(file, "%d %d\n", &w, &h);
+
+    if(w < 1 || w > 50 || h < 1 || h > 50)
+    {
+        fclose(file);
+        return 0;
+    }
+
+    int* newCells = malloc(sizeof(int) * 400);
+
+    int ch;
+    for(int y = 0; y < h; y++)
+    {
+        for(int x = 0; x < w; x++)
+        {
+            ch = fgetc(file);
+            newCells[y * w + x] = ch - '0';
+        }
+        fgetc(file);    // Ignore newline char
+    }
+
+    free(board->cells);
+    board->cells = newCells;
+    board->h = h;
+    board->w = w;
+
+    fclose(file);
+
+    return 1;
 }
 
 void destroyBoard(Board* board)

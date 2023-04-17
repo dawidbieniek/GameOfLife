@@ -36,6 +36,11 @@ void resizeBoardWindow(WINDOW* window, int w, int h);
 // Draws board on window. Draws window on screen
 void updateBoardWindow(Board* board, WINDOW* window);
 
+// Saves board to file. Return 1 if successful
+int saveBoard(Board* board, char* path);
+
+int loadBoard(Board* board, char* path);
+
 // Clears memory of board
 void destroyBoard(Board* board);
 #endif

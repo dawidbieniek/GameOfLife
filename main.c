@@ -179,8 +179,30 @@ int handleMenuPress(int menuOpt)
             }
             break;
         case 10:    // Save board
+            showInputWindow(inputWindow, "Save board (path)");
+            input = handleInputWindowInput(inputWindow);
+
+            if(!saveBoard(board, input))
+            {
+                showError(inputWindow, "Cannot write to file");
+            }
             break;
         case 11:    // Load board
+            showInputWindow(inputWindow, "Load board (path)");
+            input = handleInputWindowInput(inputWindow);
+
+            if(!loadBoard(board, input))
+            {
+                showError(inputWindow, "Cannot read from file");
+            }
+            else
+            {
+                resizeBoardWindow(boardWindow, board->w, board->h);
+                updateBoardWindow(board, boardWindow);
+                simStep = 0;
+                printSimulationInfo(simStep, simState);
+                
+            }
             break;
         case 12:    // Exit
             return 1;
