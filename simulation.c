@@ -7,37 +7,55 @@ int boardWrapping = 0;
 
 int clampX(int x, Board* board)
 {
-    if(boardWrapping)
-    {
-        if(x < 0) return board->w + x;
-        if(x >= board->w) return x - board->w;
-    }
-    else
-    {
-        if(x < 0) return 0;
-        if(x >= board->w) return board->w - 1;
-    }
+    if(x < 0) return 0;
+    if(x >= board->w) return board->w - 1;
 
     return x;
 }
 
 int clampY(int y, Board* board)
-{
-    if(boardWrapping)
-    {
-        if(y < 0) return board->h + y;
-        if(y >= board->h) return y - board->h;
-    }
-    else
-    {
-        if(y < 0) return 0;
-        if(y >= board->h) return board->h - 1;
-    }
+{    
+    if(y < 0) return 0;
+    if(y >= board->h) return board->h - 1;
 
     return y;
 }
 
+int clampXWrap(int x, Board* board)
+{
+    if(x < 0) return board->w + x;
+    if(x >= board->w) return x - board->w;
+
+    return x;
+}
+
+int clampYWrap(int y, Board* board)
+{
+
+    if(y < 0) return board->h + y;
+    if(y >= board->h) return y - board->h;
+        
+    return y;
+}
+
 int getNeighbourCount(int x, int y, Board* board)
+{
+    int neighbours = 0;
+
+    for(int j = clampY(y - 1, board); j <= clampY(y + 1, board); j++)
+    {
+        for(int i = clampX(x - 1, board); i <= clampX(x + 1, board); i++)
+        {
+            if(i == x && j == y) continue;
+
+            neighbours += getCell(i, j, board);
+        }
+    }
+
+    return neighbours;
+}
+
+int getNeighbourCountWrap(int x, int y, Board* board)
 {
     int neighbours = 0;
 
@@ -47,10 +65,7 @@ int getNeighbourCount(int x, int y, Board* board)
         {
             if(i == x && j == y) continue;
 
-            if(getCell(clampX(i, board), clampY(j, board), board))
-            {
-                neighbours++;
-            }
+            neighbours += getCell(clampXWrap(i, board), clampYWrap(j, board), board);
         }
     }
 
@@ -63,11 +78,24 @@ void stepSimulation(Board* board, Ruleset* ruleset)
     Board* neighbourBoard = createBoard(board->w, board->h);    // Im using board to store neighbour count
     
     // Count number of neighbours for each cell in original board
-    for(int y = 0; y < board->h; y++)
-    {
-        for(int x = 0; x < board->w; x++)
+    if(boardWrapping)
+    {    
+        for(int y = 0; y < board->h; y++)
         {
-            setCell(x, y, getNeighbourCount(x, y, board), neighbourBoard);
+            for(int x = 0; x < board->w; x++)
+            {
+                setCell(x, y, getNeighbourCountWrap(x, y, board), neighbourBoard);
+            }
+        }
+    }
+    else
+    {    
+        for(int y = 0; y < board->h; y++)
+        {
+            for(int x = 0; x < board->w; x++)
+            {
+                setCell(x, y, getNeighbourCount(x, y, board), neighbourBoard);
+            }
         }
     }
 
