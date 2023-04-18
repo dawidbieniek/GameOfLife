@@ -32,9 +32,13 @@ Ruleset* ruleset;
 void printSimulationInfo(int simStep, int gameState)
 {
     mvprintw(0, 0, "Press q to exit");
+    move(2,0);
+    clrtoeol();
+    refresh();
     mvprintw(2, 0, "Simulation state: %s", gameState ? "playing" : "paused ");
     mvprintw(3, 0, "Simulation step: %d", simStep);
     refresh();
+    wrefresh(stdscr);
 }
 
 void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep, int* gameState)
@@ -63,6 +67,7 @@ void toggleSimulation()
         lockMenuOptions(menuWindow, 0);
         pauseGameThread();
     }
+
 }
 
 void oneStepSimulation()
@@ -148,6 +153,11 @@ int handleMenuPress(int menuOpt)
         case 6:     // Clear cell
             break;
         case 7:     // Clear board
+            if(simState)
+            {
+                toggleSimulation();
+            }
+            simStep = 0;
             clearBoard(board);
             updateBoardWindow(board, boardWindow);
             break;
@@ -247,10 +257,12 @@ int main()
     inputWindow = createInputWindow(60, 18);
 
     updateBoardWindow(board, boardWindow);
-    updateMenuWindow(menuWindow);
+    updateMenuWindowUnsafe(menuWindow);
 
     refreshMutex = startGameThread(&nextSimulationStep, board, ruleset, boardWindow, &simStep, &simState);
     pauseGameThread();
+
+    setMenuRefreshMutex(&refreshMutex);
 
     while((ch = getch()) != 'q')
     {

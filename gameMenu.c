@@ -1,6 +1,7 @@
 #include "gameMenu.h"
 
 #include <ncurses.h>
+#include <pthread.h>
 
 #include <stdlib.h>
 #include <menu.h>
@@ -20,6 +21,8 @@ const int lockableOptions[] =
 MENU* menu;
 ITEM** items;
 int selectedItemIndex = 0;
+
+pthread_mutex_t* menuRefreshMutex;
 
 WINDOW* createMenuWindow(int x, int y)
 {
@@ -56,8 +59,19 @@ WINDOW* createMenuWindow(int x, int y)
     return menuWindow;
 }
 
-// TODO: delete
+void setMenuRefreshMutex(pthread_mutex_t* refreshMutex)
+{
+    menuRefreshMutex = refreshMutex;
+}
+
 void updateMenuWindow(WINDOW* window)
+{
+    pthread_mutex_lock(menuRefreshMutex);
+    wrefresh(window);
+    pthread_mutex_unlock(menuRefreshMutex);
+}
+
+void updateMenuWindowUnsafe(WINDOW* window)
 {
     wrefresh(window);
 }
@@ -88,7 +102,7 @@ int handleMenuInput(WINDOW* window, int ch)
                 selectedItemIndex = 12;
                 menu_driver(menu, REQ_LAST_ITEM);
             }
-            wrefresh(window);
+            updateMenuWindow(window);
             break;
         case ' ':
         // case KEY_ENTER:
@@ -114,7 +128,7 @@ void lockMenuOptions(WINDOW* window, int lock)
             item_opts_on(items[lockableOptions[i]], O_SELECTABLE);
         }
     }
-    wrefresh(window);
+    updateMenuWindow(window);
 }
 
 int isMenuOptionAviable(int menuOpt, int simState)
