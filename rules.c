@@ -6,8 +6,9 @@
 Ruleset* createEmptyRuleset()
 {
     Ruleset* rules = malloc(sizeof(Ruleset));
+    int i;
 
-    for(int i = 0; i < 8; i++)
+    for(i = 0; i < 8; i++)
     {
         rules->aliveToAlive[i] = 0;
         rules->deadToAlive[i] = 0;
@@ -18,9 +19,11 @@ Ruleset* createEmptyRuleset()
 
 int validateRules(char* rules)
 {
-    // Check for /
     int containsSlash = 0;
-    for(int i = 0; i < strlen(rules); i++)
+    int i;
+
+    /* Check for / */
+    for(i = 0; i < strlen(rules); i++)
     {
         if(rules[i] == '/')
         {
@@ -30,8 +33,8 @@ int validateRules(char* rules)
     }
     if(!containsSlash) return 0;
 
-    // Check if all are digits
-    for(int i = 0; i < strlen(rules); i++)
+    /* Check if all are digits */
+    for(i = 0; i < strlen(rules); i++)
     {
         if((rules[i] < '0' || rules[i] > '8') && rules[i] != '/')
         {
@@ -44,16 +47,18 @@ int validateRules(char* rules)
 
 void parseRules(char* rules, Ruleset* ruleset)
 {
+    int i;
+    int beforeSlash = 1;
+
     if(!validateRules(rules)) return;
 
-    for(int i = 0; i < 8; i++)
+    for(i = 0; i < 8; i++)
     {
         ruleset->aliveToAlive[i] = 0;
         ruleset->deadToAlive[i] = 0;
     }
 
-    int beforeSlash = 1;
-    for(int i = 0; i < strlen(rules); i++)
+    for(i = 0; i < strlen(rules); i++)
     {
         if(rules[i] == '/')
         {
@@ -75,9 +80,9 @@ void parseRules(char* rules, Ruleset* ruleset)
 char* rulesetToString(Ruleset* ruleset)
 {
     int nextChar = 0;
-    char* rules = calloc(18, sizeof(char));     // 8 alive-alive + 1 '/' + 8 dead-alive + 1 '\0'
-
-    for(int i = 0; i < 8; i++)
+    char* rules = calloc(18, sizeof(char));     /* 8 alive-alive + 1 '/' + 8 dead-alive + 1 '\0' */
+    int i;
+    for(i = 0; i < 8; i++)
     {
         if(ruleset->aliveToAlive[i])
         {
@@ -87,7 +92,7 @@ char* rulesetToString(Ruleset* ruleset)
 
     rules[nextChar++] = '/';
 
-    for(int i = 0; i < 8; i++)
+    for(i = 0; i < 8; i++)
     {
         if(ruleset->deadToAlive[i])
         {
@@ -103,7 +108,7 @@ int nextCellState(Ruleset* ruleset, int state, int neighbours)
     if(neighbours < 0 || neighbours > 8) return -1;
 
     if((state && ruleset->aliveToAlive[neighbours]) ||
-        !state && ruleset->deadToAlive[neighbours])
+       (!state && ruleset->deadToAlive[neighbours]))
     {
         return 1;
     }

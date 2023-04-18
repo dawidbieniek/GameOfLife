@@ -9,7 +9,9 @@
 
 void clearBoard(Board* board)
 {
-    for(int i = 0; i < board->w * board->h; i++)
+    int i;
+
+    for(i = 0; i < board->w * board->h; i++)
     {
         board->cells[i] = 0;
     }
@@ -17,7 +19,9 @@ void clearBoard(Board* board)
 
 Board* createBoard(int w, int h)
 {
-    Board* board = malloc(sizeof(Board));
+    Board* board;
+
+    board = malloc(sizeof(Board));
     board->cells = calloc(w * h, sizeof(int));
     board->w = w;
     board->h = h;
@@ -27,16 +31,19 @@ Board* createBoard(int w, int h)
 
 void resizeBoard(Board* board, int w, int h)
 {
+    int* newCells;
+    int maxY, maxX, y, x;
+
     if(w == board->w && h == board->h) return;
 
-    int* newCells = calloc(w * h, sizeof(int));
+    newCells = calloc(w * h, sizeof(int));
 
-    int maxY = board->h > h ? h : board->h;
-    int maxX = board->w > w ? w : board->w;
+    maxY = board->h > h ? h : board->h;
+    maxX = board->w > w ? w : board->w;
 
-    for(int y = 0; y < maxY; y++)
+    for(y = 0; y < maxY; y++)
     {
-        for(int x = 0; x < maxX; x++)
+        for(x = 0; x < maxX; x++)
         {
             newCells[y * w + x] = getCell(x, y, board);
         }
@@ -60,9 +67,11 @@ int getCell(int x, int y, Board* board)
 
 void writeBoard(Board* board)
 {
-    for(int y = 0; y < board->h; y++)
+    int y, x;
+
+    for(y = 0; y < board->h; y++)
     {
-        for(int x = 0; x < board->w; x++)
+        for(x = 0; x < board->w; x++)
         {
             mvprintw(y+40, x, "%c ", getCell(x, y, board) ? 'o' : '.');
         }
@@ -84,19 +93,21 @@ void resizeBoardWindow(WINDOW* window, int w, int h)
     werase(window);
     wrefresh(window);
 #ifdef WIDE_MODE
-    wresize(window, h+2, (w*2)+2);   // +2 for border
+    wresize(window, h+2, (w*2)+2);   /* +2 for border */
 #else
-    wresize(window, h+2, w+2);   // +2 for border
+    wresize(window, h+2, w+2);   /* +2 for border */
 #endif
 }
 
-// TODO: Pozbyć się zwracanego WINDOW, wszystko przechować globalnie w tym pliku
+/* TODO: Pozbyć się zwracanego WINDOW, wszystko przechować globalnie w tym pliku */
 void updateBoardWindow(Board* board, WINDOW* window)
 {
-    for(int y = 0; y < board->h; y++)
+    int y, x;
+
+    for(y = 0; y < board->h; y++)
     {
         wmove(window, y+1, 1);
-        for(int x = 0; x < board->w; x++)
+        for(x = 0; x < board->w; x++)
         {
 #ifdef WIDE_MODE
             wprintw(window, "%c ", getCell(x, y, board) ? 'o' : '.');
@@ -111,7 +122,10 @@ void updateBoardWindow(Board* board, WINDOW* window)
 
 int saveBoard(Board* board, char* path)
 {
-    FILE* file = fopen(path, "w");
+    FILE* file;
+    int i, x;
+
+    file = fopen(path, "w");
     if(file == NULL)
     {
         return 0;
@@ -119,9 +133,9 @@ int saveBoard(Board* board, char* path)
 
     fprintf(file, "%d %d\n", board->w, board->h);
 
-    for(int i = 0; i < board->h; i++)
+    for(i = 0; i < board->h; i++)
     {
-        for(int x = 0; x < board->w; x++)
+        for(x = 0; x < board->w; x++)
         {
             fputc(getCell(x, i, board) + '0', file);
         }
@@ -135,15 +149,16 @@ int saveBoard(Board* board, char* path)
 
 int loadBoard(Board* board, char* path)
 {
-    FILE* file = fopen(path, "r");
+    FILE* file;
+    int w, h, ch, y, x;
+    int* newCells;
+
+    file = fopen(path, "r");
     if(file == NULL)
     {
         return 0;
     }
     
-    char* line;
-
-    int w, h;
     fscanf(file, "%d %d\n", &w, &h);
 
     if(w < 1 || w > 50 || h < 1 || h > 50)
@@ -152,17 +167,16 @@ int loadBoard(Board* board, char* path)
         return 0;
     }
 
-    int* newCells = malloc(sizeof(int) * 400);
+    newCells = malloc(sizeof(int) * 400);
 
-    int ch;
-    for(int y = 0; y < h; y++)
+    for(y = 0; y < h; y++)
     {
-        for(int x = 0; x < w; x++)
+        for(x = 0; x < w; x++)
         {
             ch = fgetc(file);
             newCells[y * w + x] = ch - '0';
         }
-        fgetc(file);    // Ignore newline char
+        fgetc(file);    /* Ignore newline char */
     }
 
     free(board->cells);

@@ -72,7 +72,7 @@ void toggleSimulation()
 
 void oneStepSimulation()
 {
-    //TODO: Zamiast tego, powinien być blok w menu
+    /* TODO: Zamiast tego, powinien być blok w menu */
     if(!simState)
     {
         nextSimulationStep(board, ruleset, boardWindow, &simStep, &simState);
@@ -97,29 +97,32 @@ void setBoardH(int newH)
 
 int handleMenuPress(int menuOpt)
 {
+    char* input;
+    int intInput;
+    float floatInput;
+
     if(!isMenuOptionAviable(menuOpt, simState))
     {
         return 0;
     }
 
-    char* input;
     switch(menuOpt)
     {
-        case 0:     // Start/Stop
+        case 0:     /* Start/Stop */
             toggleSimulation();
             break;
-        case 1:     // Step
+        case 1:     /* Step */
             oneStepSimulation();
             break;
-        case 2:     // Set width
+        case 2:     /* Set width */
             showInputWindow(inputWindow, "Set board width (1-50)");
             input = handleInputWindowInput(inputWindow);
-            int newW = atoi(input);
+            intInput = atoi(input);
 
-            if(newW >= 1 && newW <= 50)
+            if(intInput >= 1 && intInput <= 50)
             {
                 pthread_mutex_lock(&refreshMutex);
-                setBoardW(newW);
+                setBoardW(intInput);
                 pthread_mutex_unlock(&refreshMutex);
             }
             else
@@ -128,15 +131,15 @@ int handleMenuPress(int menuOpt)
             }
 
             break;
-        case 3:     // Set height
+        case 3:     /* Set height */
             showInputWindow(inputWindow, "Set board height (1-50)");
             input = handleInputWindowInput(inputWindow);
-            int newH = atoi(input);
+            intInput = atoi(input);
 
-            if(newH >= 1 && newH <= 50)
+            if(intInput >= 1 && intInput <= 50)
             {
                 pthread_mutex_lock(&refreshMutex);
-                setBoardH(newH);
+                setBoardH(intInput);
                 pthread_mutex_unlock(&refreshMutex);
             }
             else
@@ -144,15 +147,15 @@ int handleMenuPress(int menuOpt)
                 showError(inputWindow, "Wrong input value");
             }
             break;
-        case 4:     // Toggle wrapping
+        case 4:     /* Toggle wrapping */
             wrap = !wrap;
             setWrapping(wrap);
             break;
-        case 5:     // Set cell
+        case 5:     /* Set cell */
             break;
-        case 6:     // Clear cell
+        case 6:     /* Clear cell */
             break;
-        case 7:     // Clear board
+        case 7:     /* Clear board */
             if(simState)
             {
                 toggleSimulation();
@@ -161,21 +164,21 @@ int handleMenuPress(int menuOpt)
             clearBoard(board);
             updateBoardWindow(board, boardWindow);
             break;
-        case 8:     // Set sim speed
+        case 8:     /* Set sim speed */
             showInputWindow(inputWindow, "Set simulation speed (0.5-10)");
             input = handleInputWindowInput(inputWindow);
-            float speed = atof(input);
+            floatInput = atof(input);
 
-            if(speed >= 0.5 && speed <= 10.0)
+            if(floatInput >= 0.5 && floatInput <= 10.0)
             {
-                setSleepDuration(1000.0/speed);
+                setSleepDuration(1000.0/floatInput);
             }
             else
             {
                 showError(inputWindow, "Wrong input value");
             }
             break;
-        case 9:     // Set rules
+        case 9:     /* Set rules */
             showInputWindow(inputWindow, "Set rules (a->a/d->a)");
             input = handleInputWindowInput(inputWindow);
             
@@ -188,7 +191,7 @@ int handleMenuPress(int menuOpt)
                 parseRules(input, ruleset);
             }
             break;
-        case 10:    // Save board
+        case 10:    /* Save board */
             showInputWindow(inputWindow, "Save board (path)");
             input = handleInputWindowInput(inputWindow);
 
@@ -197,7 +200,7 @@ int handleMenuPress(int menuOpt)
                 showError(inputWindow, "Cannot write to file");
             }
             break;
-        case 11:    // Load board
+        case 11:    /* Load board */
             showInputWindow(inputWindow, "Load board (path)");
             input = handleInputWindowInput(inputWindow);
 
@@ -214,7 +217,7 @@ int handleMenuPress(int menuOpt)
                 
             }
             break;
-        case 12:    // Exit
+        case 12:    /* Exit */
             return 1;
     }
     return 0;
@@ -223,10 +226,12 @@ int handleMenuPress(int menuOpt)
 int main()
 {
     int ch;
-    int menuOpt = -1;
+    int menuOpt;
+    
+    menuOpt = -1;
 
     board = createBoard(boardW, boardH);
-    // Test purposes
+    /* Test purposes */
     setCell(5,5,1,board);
     setCell(6,5,1,board);
     setCell(7,5,1,board);
@@ -234,21 +239,21 @@ int main()
     setCell(6,7,1,board);
 
     ruleset = createEmptyRuleset();
-    parseRules("23/3", ruleset);   // Standard rules
+    parseRules("23/3", ruleset);   /* Standard rules */
 
     initscr();
-    // ## START ##
-    start_color();      // TODO: check if can use color
-    noecho();           // Disable printing of pressed characters in window
-    cbreak();           // Disables line buffering
-    keypad(stdscr, 1);  // Enable input of special keys
-    curs_set(0);        // Hides cursor
-    nodelay(stdscr, 1); // Disables lock for getch()
+    /* ## START ## */
+    start_color();      /* TODO: check if can use color */
+    noecho();           /* Disable printing of pressed characters in window */
+    cbreak();           /* Disables line buffering */
+    keypad(stdscr, 1);  /* Enable input of special keys */
+    curs_set(0);        /* Hides cursor */
+    nodelay(stdscr, 1); /* Disables lock for getch() */
     
-    nodelay(inputWindow, 0); // Enables lock for getch() for input window
+    nodelay(inputWindow, 0); /* Enables lock for getch() for input window */
 
-    init_pair(1, 8, 0); // Color for unselectable menu items
-    init_pair(2, 1, 0); // Color for error message
+    init_pair(1, 8, 0); /* Color for unselectable menu items */
+    init_pair(2, 1, 0); /* Color for error message */
 
     printSimulationInfo(simStep, simState);
 
@@ -285,11 +290,11 @@ int main()
                 break;
         }
 
-        // Added some delay to slow down while loop when getch is set to not block thread
+        /* Added some delay to slow down while loop when getch is set to not block thread */
         usleep(1000);
     }
 
-    // ## END ##
+    /* ## END ## */
     endwin();
 
     destroyGameThread();

@@ -1,12 +1,18 @@
 #DEFINES=-DWIDE_MODE
-#WARNINGS=-ansi -pedantic
+WARNINGS=-ansi -pedantic
 OBJECTS=rules.o board.o simulation.o gameThread.o gameMenu.o inputWindow.o
 LIBS=-lncurses -lmenu -lpthread
 NAME=gol
 
 CC=gcc
-#CFLAGS=${WARNINGS}
-CPPFLAGS=$(DEFINES)
+CFLAGS=${WARNINGS}
+CPPFLAGS_INITIAL=$(DEFINES)
+
+ifneq (${MAKECMDGOALS}, thin)
+CPPFLAGS=${CPPFLAGS_INITIAL} -DWIDE_MODE
+else
+CPPFLAGS=${CPPFLAGS_INITIAL}
+endif
 
 # Main program
 main: ${OBJECTS}

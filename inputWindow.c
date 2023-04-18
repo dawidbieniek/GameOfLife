@@ -6,7 +6,9 @@
 
 WINDOW* createInputWindow(int x, int y)
 {
-    WINDOW* window = newwin(3, 30, y, x);
+    WINDOW* window;
+    
+    window = newwin(3, 30, y, x);
 
     return window;
 }
@@ -26,14 +28,16 @@ void hideInputWindow(WINDOW* window)
 
 char* handleInputWindowInput(WINDOW* window)
 {
-    echo();             // Enables printing of pressed characters in window
-    nocbreak();         // Enables line buffering
+    char* c;
+    
+    echo();             /* Enables printing of pressed characters in window */
+    nocbreak();         /* Enables line buffering */
 
-    char* c = malloc(sizeof(char) * 50);
+    c = malloc(sizeof(char) * 50);
     wgetnstr(window, c, 50);
 
-    noecho();           // Disable printing of pressed characters in window
-    cbreak();           // Disables line buffering
+    noecho();           /* Disable printing of pressed characters in window */
+    cbreak();           /* Disables line buffering */
     hideInputWindow(window);
 
     return c;

@@ -8,14 +8,14 @@
 
 const int lockableOptions[] = 
 {
-    1,      // Step
-    2,      // Set width
-    3,      // Set height
-    5,      // Set cell to alive
-    6,      // Set cell to dead
-    9,      // Set rules
-    10,     // Save board
-    11      // Load board
+    1,      /* Step */
+    2,      /* Set width */
+    3,      /* Set height */
+    5,      /* Set cell to alive */
+    6,      /* Set cell to dead */
+    9,      /* Set rules */
+    10,     /* Save board */
+    11      /* Load board */
 };
 
 MENU* menu;
@@ -51,7 +51,7 @@ WINDOW* createMenuWindow(int x, int y)
     set_menu_win(menu, menuWindow);
     set_menu_sub(menu, derwin(menuWindow, 13, 25, 0, 0));
 
-    keypad(menuWindow, TRUE);  // Enable input of special keys
+    keypad(menuWindow, TRUE);  /* Enable input of special keys */
 
     post_menu(menu);
     wrefresh(menuWindow);
@@ -105,7 +105,7 @@ int handleMenuInput(WINDOW* window, int ch)
             updateMenuWindow(window);
             break;
         case ' ':
-        // case KEY_ENTER:
+        /* case KEY_ENTER: */
             return selectedItemIndex;
     }
 
@@ -114,16 +114,18 @@ int handleMenuInput(WINDOW* window, int ch)
 
 void lockMenuOptions(WINDOW* window, int lock)
 {
+    int i;
+
     if(lock)
     {
-        for(int i = 0; i < 8; i++)
+        for(i = 0; i < 8; i++)
         {
             item_opts_off(items[lockableOptions[i]], O_SELECTABLE);
         }
     }
     else
     {
-        for(int i = 0; i < 8; i++)
+        for(i = 0; i < 8; i++)
         {
             item_opts_on(items[lockableOptions[i]], O_SELECTABLE);
         }
@@ -133,9 +135,11 @@ void lockMenuOptions(WINDOW* window, int lock)
 
 int isMenuOptionAviable(int menuOpt, int simState)
 {
+    int i;
+
     if(simState)
     {
-        for(int i = 0; i < 8; i++)
+        for(i = 0; i < 8; i++)
         {
             if(lockableOptions[i] == menuOpt)
             {

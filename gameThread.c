@@ -12,11 +12,11 @@ WINDOW* boardWindowRef;
 int* simStepRef;
 int* simStateRef;
 
-// Thread
+/* Thread */
 pthread_t gameThread;
 void (*loopedFunction)(Board*, Ruleset*, WINDOW*, int*, int*);
 
-// Mutexes
+/* Mutexes*/
 pthread_mutex_t suspendedMutex;
 int isSuspended;
 pthread_cond_t resumeCondition;
