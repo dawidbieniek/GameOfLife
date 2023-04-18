@@ -32,13 +32,11 @@ Ruleset* ruleset;
 void printSimulationInfo(int simStep, int gameState)
 {
     mvprintw(0, 0, "Press q to exit");
-    move(2,0);
-    clrtoeol();
-    refresh();
     mvprintw(2, 0, "Simulation state: %s", gameState ? "playing" : "paused ");
+    mvprintw(3, 18, "      ");
+    refresh();
     mvprintw(3, 0, "Simulation step: %d", simStep);
     refresh();
-    wrefresh(stdscr);
 }
 
 void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep, int* gameState)
@@ -156,11 +154,13 @@ int handleMenuPress(int menuOpt)
         case 6:     /* Clear cell */
             break;
         case 7:     /* Clear board */
+            simStep = 0;
             if(simState)
             {
                 toggleSimulation();
             }
-            simStep = 0;
+            printSimulationInfo(simStep, simState);
+            
             clearBoard(board);
             updateBoardWindow(board, boardWindow);
             break;
