@@ -220,7 +220,7 @@ int handleMenuPress(int menuOpt)
                 updateBoardWindow(board, boardWindow, -1, -1);
                 simStep = 0;
                 printSimulationInfo(simStep, simState);
-                
+
                 selectedX = 0;
                 selectedY = 0;
                 
@@ -240,12 +240,6 @@ int main()
     menuOpt = -1;
 
     board = createBoard(boardW, boardH);
-    /* Test purposes */
-    setCell(5,5,1,board);
-    setCell(6,5,1,board);
-    setCell(7,5,1,board);
-    setCell(5,6,1,board);
-    setCell(6,7,1,board);
 
     ruleset = createEmptyRuleset();
     parseRules("23/3", ruleset);   /* Standard rules */
