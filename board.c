@@ -65,20 +65,6 @@ int getCell(int x, int y, Board* board)
     return board->cells[y * board->w + x];
 }
 
-void writeBoard(Board* board)
-{
-    int y, x;
-
-    for(y = 0; y < board->h; y++)
-    {
-        for(x = 0; x < board->w; x++)
-        {
-            mvprintw(y+40, x, "%c ", getCell(x, y, board) ? 'o' : '.');
-        }
-    }
-    refresh();
-}
-
 WINDOW* createBoardWindow(Board* board, int x, int y)
 {
 #ifdef WIDE_MODE
@@ -100,7 +86,7 @@ void resizeBoardWindow(WINDOW* window, int w, int h)
 }
 
 /* TODO: Pozbyć się zwracanego WINDOW, wszystko przechować globalnie w tym pliku */
-void updateBoardWindow(Board* board, WINDOW* window)
+void updateBoardWindow(Board* board, WINDOW* window, int selectedX, int selectedY)
 {
     int y, x;
 
@@ -109,11 +95,21 @@ void updateBoardWindow(Board* board, WINDOW* window)
         wmove(window, y+1, 1);
         for(x = 0; x < board->w; x++)
         {
-#ifdef WIDE_MODE
-            wprintw(window, "%c ", getCell(x, y, board) ? 'o' : '.');
-#else
+            if(x == selectedX && y == selectedY)
+            {
+                wattron(window, COLOR_PAIR(3) | A_BOLD);
+            }
+
             wprintw(window, "%c", getCell(x, y, board) ? 'o' : '.');
+            
+            if(x == selectedX && y == selectedY)
+            {
+                wattroff(window, COLOR_PAIR(3) | A_BOLD);
+            }
+#ifdef WIDE_MODE
+            wprintw(window, " ");
 #endif
+    
         }
     }
     box(window, 0, 0);
@@ -147,7 +143,7 @@ int saveBoard(Board* board, char* path)
     return 1;
 }
 
-int loadBoard(Board* board, char* path)
+int loadBoard(Board* board, char* path, int maxW, int maxH)
 {
     FILE* file;
     int w, h, ch, y, x;
@@ -161,7 +157,7 @@ int loadBoard(Board* board, char* path)
     
     fscanf(file, "%d %d\n", &w, &h);
 
-    if(w < 1 || w > 50 || h < 1 || h > 50)
+    if(w < 1 || w > maxW || h < 1 || h > maxH)
     {
         fclose(file);
         return 0;

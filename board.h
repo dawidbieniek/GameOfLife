@@ -24,22 +24,20 @@ void setCell(int x, int y, int value, Board* board);
 /* Returns value of cell in board */
 int getCell(int x, int y, Board* board);
 
-/* TMP */
-void writeBoard(Board* board);
-
 /* Creates new virtual window for board */
 WINDOW* createBoardWindow(Board* board, int x, int y);
 
 /* Resizes board window and clears old one */
 void resizeBoardWindow(WINDOW* window, int w, int h);
 
-/* Draws board on window. Draws window on screen */
-void updateBoardWindow(Board* board, WINDOW* window);
+/* Draws board on window. Draws window on screen. Highlights char on position (selectedX, selectedY) if all are not -1 */
+void updateBoardWindow(Board* board, WINDOW* window, int selectedX, int selectedY);
 
 /* Saves board to file. Return 1 if successful */
 int saveBoard(Board* board, char* path);
 
-int loadBoard(Board* board, char* path);
+/* Loads board from file */
+int loadBoard(Board* board, char* path, int maxW, int maxH);
 
 /* Clears memory of board */
 void destroyBoard(Board* board);

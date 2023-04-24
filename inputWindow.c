@@ -29,9 +29,10 @@ void hideInputWindow(WINDOW* window)
 char* handleInputWindowInput(WINDOW* window)
 {
     char* c;
+    int i;
     
     echo();             /* Enables printing of pressed characters in window */
-    nocbreak();         /* Enables line buffering */
+    /* nocbreak();         /* Enables line buffering */
 
     c = malloc(sizeof(char) * 50);
     wgetnstr(window, c, 50);

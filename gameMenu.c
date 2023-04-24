@@ -29,14 +29,14 @@ WINDOW* createMenuWindow(int x, int y)
     WINDOW* menuWindow= newwin(13, 30, y, x);
 
     items = calloc(14, sizeof(ITEM*));
-    items[0] = new_item(" ", "Start [p]");
+    items[0] = new_item(" ", "Toggle simulation [p]");
     items[1] = new_item(" ", "Step [n]");
     items[2] = new_item(" ", "Set width");
     items[3] = new_item(" ", "Set height");
     items[4] = new_item(" ", "Toggle board wrapping");
     items[5] = new_item(" ", "Set cell to alive");
     items[6] = new_item(" ", "Set cell to dead");
-    items[7] = new_item(" ", "Clear board");
+    items[7] = new_item(" ", "Clear board"); 
     items[8] = new_item(" ", "Set simulation speed");
     items[9] = new_item(" ", "Set rules");
     items[10] = new_item(" ", "Save board");
