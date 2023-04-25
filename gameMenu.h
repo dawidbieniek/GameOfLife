@@ -11,16 +11,16 @@ WINDOW* createMenuWindow(int x, int y);
 void setMenuRefreshMutex(pthread_mutex_t* refreshMutex);
 
 /* Updates menu window display */
-void updateMenuWindow(WINDOW* window);
+void updateMenuWindow();
 
 /* Updates menu window display. Can cause thread racing */
-void updateMenuWindowUnsafe(WINDOW* window);
+void updateMenuWindowUnsafe();
 
 /* Handles input of arrow keys and space. Returns selected item index. -1 if handling arrows */
-int handleMenuInput(WINDOW* window, int ch);
+int handleMenuInput(int ch);
 
 /* Locks some of menu options if lock = 1; unlocks them if lock = 0; */
-void lockMenuOptions(WINDOW* window, int lock);
+void lockMenuOptions(int lock);
 
 /* Checks if option is aviable */
 int isMenuOptionAviable(int menuOpt, int simState);

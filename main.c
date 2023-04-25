@@ -46,14 +46,14 @@ void printSimulationInfo(int simStep, int gameState)
     refresh();
 }
 
-void nextSimulationStep(Board* board, Ruleset* ruleset, WINDOW* boardWindow, int* simStep, int* gameState)
+void nextSimulationStep(Board* board, Ruleset* ruleset, int* simStep, int* gameState)
 {
     stepSimulation(board, ruleset);
     (*simStep)++;
 
     pthread_mutex_lock(&refreshMutex);
     printSimulationInfo(*simStep, *gameState);
-    updateBoardWindow(board, boardWindow, -1, -1);
+    updateBoardWindow(board, -1, -1);
     pthread_mutex_unlock(&refreshMutex);
 }
 
@@ -64,12 +64,12 @@ void toggleSimulation()
 
     if(simState)
     {
-        lockMenuOptions(menuWindow, 1);
+        lockMenuOptions(1);
         resumeGameThread();
     }
     else
     {
-        lockMenuOptions(menuWindow, 0);
+        lockMenuOptions(0);
         pauseGameThread();
     }
 
@@ -79,8 +79,8 @@ void setBoardW(int newW)
 {
     boardW = newW;
     resizeBoard(board, boardW, boardH);
-    resizeBoardWindow(boardWindow, boardW, boardH);
-    updateBoardWindow(board, boardWindow, -1, -1);
+    resizeBoardWindow(boardW, boardH);
+    updateBoardWindow(board, -1, -1);
 
     selectedX = 0;
     selectedY = 0;
@@ -90,8 +90,8 @@ void setBoardH(int newH)
 {
     boardH = newH;
     resizeBoard(board, boardW, boardH);
-    resizeBoardWindow(boardWindow, boardW, boardH);
-    updateBoardWindow(board, boardWindow, -1, -1);
+    resizeBoardWindow(boardW, boardH);
+    updateBoardWindow(board, -1, -1);
 
     selectedX = 0;
     selectedY = 0;
@@ -114,11 +114,11 @@ int handleMenuPress(int menuOpt)
             toggleSimulation();
             break;
         case 1:     /* Step */
-            nextSimulationStep(board, ruleset, boardWindow, &simStep, &simState);
+            nextSimulationStep(board, ruleset, &simStep, &simState);
             break;
         case 2:     /* Set width */
-            showInputWindow(inputWindow, "Set board width");
-            input = handleInputWindowInput(inputWindow);
+            showInputWindow("Set board width");
+            input = handleInputWindowInput();
             intInput = atoi(input);
 
             if(intInput >= 1 && intInput <= maxW)
@@ -129,13 +129,13 @@ int handleMenuPress(int menuOpt)
             }
             else
             {
-                showError(inputWindow, "Wrong input value");
+                showError("Wrong input value");
             }
 
             break;
         case 3:     /* Set height */
-            showInputWindow(inputWindow, "Set board height");
-            input = handleInputWindowInput(inputWindow);
+            showInputWindow("Set board height");
+            input = handleInputWindowInput();
             intInput = atoi(input);
 
             if(intInput >= 1 && intInput <= maxH)
@@ -146,7 +146,7 @@ int handleMenuPress(int menuOpt)
             }
             else
             {
-                showError(inputWindow, "Wrong input value");
+                showError("Wrong input value");
             }
             break;
         case 4:     /* Toggle wrapping */
@@ -168,11 +168,11 @@ int handleMenuPress(int menuOpt)
             printSimulationInfo(simStep, simState);
             
             clearBoard(board);
-            updateBoardWindow(board, boardWindow, -1, -1);
+            updateBoardWindow(board, -1, -1);
             break;
         case 8:     /* Set sim speed */
-            showInputWindow(inputWindow, "Set simulation speed (0.5-10)");
-            input = handleInputWindowInput(inputWindow);
+            showInputWindow("Set simulation speed");
+            input = handleInputWindowInput();
             floatInput = atof(input);
 
             if(floatInput >= 0.5 && floatInput <= 10.0)
@@ -181,16 +181,16 @@ int handleMenuPress(int menuOpt)
             }
             else
             {
-                showError(inputWindow, "Wrong input value");
+                showError( "Wrong input value");
             }
             break;
         case 9:     /* Set rules */
-            showInputWindow(inputWindow, "Set rules (a->a/d->a)");
-            input = handleInputWindowInput(inputWindow);
+            showInputWindow("Set rules");
+            input = handleInputWindowInput();
             
             if(!validateRules(input))
             {
-                showError(inputWindow, "Wrong input value");
+                showError("Wrong input value");
             }
             else
             {
@@ -198,26 +198,26 @@ int handleMenuPress(int menuOpt)
             }
             break;
         case 10:    /* Save board */
-            showInputWindow(inputWindow, "Save board (path)");
-            input = handleInputWindowInput(inputWindow);
+            showInputWindow("Save board (path)");
+            input = handleInputWindowInput();
 
             if(!saveBoard(board, input))
             {
-                showError(inputWindow, "Cannot write to file");
+                showError("Cannot write to file");
             }
             break;
         case 11:    /* Load board */
-            showInputWindow(inputWindow, "Load board (path)");
-            input = handleInputWindowInput(inputWindow);
+            showInputWindow("Load board (path)");
+            input = handleInputWindowInput();
 
             if(!loadBoard(board, input, maxW, maxH))
             {
-                showError(inputWindow, "Cannot read from file");
+                showError("Cannot read from file");
             }
             else
             {
-                resizeBoardWindow(boardWindow, board->w, board->h);
-                updateBoardWindow(board, boardWindow, -1, -1);
+                resizeBoardWindow(board->w, board->h);
+                updateBoardWindow(board, -1, -1);
                 simStep = 0;
                 printSimulationInfo(simStep, simState);
 
@@ -260,22 +260,22 @@ int main()
     init_pair(3, 0, 7); /* Color board cell highlight */
 
 #ifdef WIDE_MODE
-    maxW = (COLS - 32) / 2;
+    maxW = (COLS - 27) / 2;
 #else
-    maxW = COLS - 32;
+    maxW = COLS - 27;
 #endif
     maxH = LINES - 5;
 
     printSimulationInfo(simStep, simState);
 
     boardWindow = createBoardWindow(board, 0, 4);
-    menuWindow = createMenuWindow(COLS-30, 4);
-    inputWindow = createInputWindow(COLS-30, 18);
+    menuWindow = createMenuWindow(COLS-25, 4);
+    inputWindow = createInputWindow(COLS-25, 18);
 
-    updateBoardWindow(board, boardWindow, -1, -1);
-    updateMenuWindowUnsafe(menuWindow);
+    updateBoardWindow(board, -1, -1);
+    updateMenuWindowUnsafe();
 
-    refreshMutex = startGameThread(&nextSimulationStep, board, ruleset, boardWindow, &simStep, &simState);
+    refreshMutex = startGameThread(&nextSimulationStep, board, ruleset, &simStep, &simState);
     pauseGameThread();
 
     setMenuRefreshMutex(&refreshMutex);
@@ -288,7 +288,7 @@ int main()
         {
             if(ch == 'q') break;
 
-            menuOpt = handleMenuInput(menuWindow, ch);
+            menuOpt = handleMenuInput(ch);
             if(menuOpt > -1)
             {
                 if(handleMenuPress(menuOpt))
@@ -312,7 +312,7 @@ int main()
             if(ch == 'q')
             {
                 changingBoard = 0;
-                updateBoardWindow(board, boardWindow, -1, -1);
+                updateBoardWindow(board, -1, -1);
 
                 continue;;
             }
@@ -352,7 +352,7 @@ int main()
                     break;
             }
 
-            updateBoardWindow(board, boardWindow, selectedX, selectedY);
+            updateBoardWindow(board, selectedX, selectedY);
         }
 
         /* Added some delay to slow down while loop when getch is set to not block thread */

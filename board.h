@@ -28,10 +28,10 @@ int getCell(int x, int y, Board* board);
 WINDOW* createBoardWindow(Board* board, int x, int y);
 
 /* Resizes board window and clears old one */
-void resizeBoardWindow(WINDOW* window, int w, int h);
+void resizeBoardWindow(int w, int h);
 
 /* Draws board on window. Draws window on screen. Highlights char on position (selectedX, selectedY) if all are not -1 */
-void updateBoardWindow(Board* board, WINDOW* window, int selectedX, int selectedY);
+void updateBoardWindow(Board* board, int selectedX, int selectedY);
 
 /* Saves board to file. Return 1 if successful */
 int saveBoard(Board* board, char* path);

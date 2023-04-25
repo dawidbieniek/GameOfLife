@@ -1,60 +1,60 @@
 #include "inputWindow.h"
 
 #include <ncurses.h>
-
 #include <stdlib.h>
 
+WINDOW* inputWindow_inputWindow = NULL;
+
+
 WINDOW* createInputWindow(int x, int y)
-{
-    WINDOW* window;
-    
-    window = newwin(3, 30, y, x);
+{    
+    inputWindow_inputWindow = newwin(3, 25, y, x);
 
-    return window;
+    return inputWindow_inputWindow;
 }
 
-void showInputWindow(WINDOW* window, const char* title)
+void showInputWindow(const char* title)
 {
-    mvwprintw(window, 0, 0, "%s", title);
-    mvwprintw(window, 1, 0, ">");
-    wrefresh(window);
+    mvwprintw(inputWindow_inputWindow, 0, 0, "%s", title);
+    mvwprintw(inputWindow_inputWindow, 1, 0, ">");
+    wrefresh(inputWindow_inputWindow);
 }
 
-void hideInputWindow(WINDOW* window)
+void hideInputWindow()
 {
-    wclear(window);
-    wrefresh(window);
+    wclear(inputWindow_inputWindow);
+    wrefresh(inputWindow_inputWindow);
 }
 
-char* handleInputWindowInput(WINDOW* window)
+char* handleInputWindowInput()
 {
     char* c;
     int i;
     
     echo();             /* Enables printing of pressed characters in window */
-    /* nocbreak();         /* Enables line buffering */
+    nocbreak();         /* Enables line buffering */
 
     c = malloc(sizeof(char) * 50);
-    wgetnstr(window, c, 50);
+    wgetnstr(inputWindow_inputWindow, c, 48);
 
     noecho();           /* Disable printing of pressed characters in window */
     cbreak();           /* Disables line buffering */
-    hideInputWindow(window);
+    hideInputWindow();
 
     return c;
 }
 
 void showMessage(WINDOW* window, char* message)
 {
-    mvwprintw(window, 0, 0, "%s", message);
-    wrefresh(window);
+    mvwprintw(inputWindow_inputWindow, 0, 0, "%s", message);
+    wrefresh(inputWindow_inputWindow);
 }
 
-void showError(WINDOW* window, char* message)
+void showError(char* message)
 {
-    wattron(window, COLOR_PAIR(2) | A_BOLD);
-    showMessage(window, message);
-    wattroff(window, COLOR_PAIR(2) | A_BOLD);
-    wgetch(window);
-    hideInputWindow(window);
+    wattron(inputWindow_inputWindow, COLOR_PAIR(2) | A_BOLD);
+    showMessage(inputWindow_inputWindow, message);
+    wattroff(inputWindow_inputWindow, COLOR_PAIR(2) | A_BOLD);
+    wgetch(inputWindow_inputWindow);
+    hideInputWindow(inputWindow_inputWindow);
 }

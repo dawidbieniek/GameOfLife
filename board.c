@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <string.h>
 
+WINDOW* board_boardWindow = NULL;
+
 void clearBoard(Board* board)
 {
     int i;
@@ -68,52 +70,54 @@ int getCell(int x, int y, Board* board)
 WINDOW* createBoardWindow(Board* board, int x, int y)
 {
 #ifdef WIDE_MODE
-    return newwin(board->h+2, (board->w*2)+2, y, x);
+    board_boardWindow =  newwin(board->h+2, (board->w*2)+2, y, x);
 #else
-    return newwin(board->h+2, board->w+2, y, x);
+    board_boardWindow =  newwin(board->h+2, board->w+2, y, x);
 #endif
+
+    return board_boardWindow;
 }
 
-void resizeBoardWindow(WINDOW* window, int w, int h)
+void resizeBoardWindow(int w, int h)
 {
-    werase(window);
-    wrefresh(window);
+    werase(board_boardWindow);
+    wrefresh(board_boardWindow);
 #ifdef WIDE_MODE
-    wresize(window, h+2, (w*2)+2);   /* +2 for border */
+    wresize(board_boardWindow, h+2, (w*2)+2);   /* +2 for border */
 #else
-    wresize(window, h+2, w+2);   /* +2 for border */
+    wresize(board_boardWindow, h+2, w+2);   /* +2 for border */
 #endif
 }
 
-/* TODO: Pozbyć się zwracanego WINDOW, wszystko przechować globalnie w tym pliku */
-void updateBoardWindow(Board* board, WINDOW* window, int selectedX, int selectedY)
+void updateBoardWindow(Board* board, int selectedX, int selectedY)
 {
     int y, x;
 
+    /* TODO: MUtex */
     for(y = 0; y < board->h; y++)
     {
-        wmove(window, y+1, 1);
+        wmove(board_boardWindow, y+1, 1);
         for(x = 0; x < board->w; x++)
         {
             if(x == selectedX && y == selectedY)
             {
-                wattron(window, COLOR_PAIR(3) | A_BOLD);
+                wattron(board_boardWindow, COLOR_PAIR(3) | A_BOLD);
             }
 
-            wprintw(window, "%c", getCell(x, y, board) ? 'o' : '.');
+            wprintw(board_boardWindow, "%c", getCell(x, y, board) ? 'o' : '.');
             
             if(x == selectedX && y == selectedY)
             {
-                wattroff(window, COLOR_PAIR(3) | A_BOLD);
+                wattroff(board_boardWindow, COLOR_PAIR(3) | A_BOLD);
             }
 #ifdef WIDE_MODE
-            wprintw(window, " ");
+            wprintw(board_boardWindow, " ");
 #endif
     
         }
     }
-    box(window, 0, 0);
-    wrefresh(window);
+    box(board_boardWindow, 0, 0);
+    wrefresh(board_boardWindow);
 }
 
 int saveBoard(Board* board, char* path)
