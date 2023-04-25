@@ -117,6 +117,9 @@ void updateBoardWindow(Board* board, int selectedX, int selectedY)
         }
     }
     box(board_boardWindow, 0, 0);
+#ifdef FULL_REDRAW
+    redrawwin(board_boardWindow);
+#endif
     wrefresh(board_boardWindow);
 }
 
@@ -167,7 +170,7 @@ int loadBoard(Board* board, char* path, int maxW, int maxH)
         return 0;
     }
 
-    newCells = malloc(sizeof(int) * 400);
+    newCells = malloc(sizeof(int) * w * h);
 
     for(y = 0; y < h; y++)
     {

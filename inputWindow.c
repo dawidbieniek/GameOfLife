@@ -22,7 +22,7 @@ void showInputWindow(const char* title)
 
 void hideInputWindow()
 {
-    wclear(inputWindow_inputWindow);
+    werase(inputWindow_inputWindow);
     wrefresh(inputWindow_inputWindow);
 }
 

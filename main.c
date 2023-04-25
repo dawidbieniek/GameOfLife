@@ -42,7 +42,10 @@ void printSimulationInfo(int simStep, int gameState)
     mvprintw(2, 0, "Simulation state: %s", gameState ? "playing" : "paused ");
     mvprintw(3, 18, "      ");
     refresh();
-    mvprintw(3, 0, "Simulation step: %d", simStep);
+    mvprintw(3, 0, "Simulation step: %d", simStep);    
+#ifdef FULL_REDRAW
+    wredrawln(stdscr, 0, 3);
+#endif
     refresh();
 }
 
@@ -175,7 +178,7 @@ int handleMenuPress(int menuOpt)
             input = handleInputWindowInput();
             floatInput = atof(input);
 
-            if(floatInput >= 0.5 && floatInput <= 10.0)
+            if(floatInput >= 0.5 && floatInput <= 20.0)
             {
                 setSleepDuration(1000.0/floatInput);
             }

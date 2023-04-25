@@ -6,20 +6,18 @@ NAME=gol
 
 CC=gcc
 CFLAGS=${WARNINGS}
-CPPFLAGS_INITIAL=$(DEFINES)
+CPPFLAGS=${DEFINES}
 
-ifneq (${MAKECMDGOALS}, thin)
-CPPFLAGS=${CPPFLAGS_INITIAL} -DWIDE_MODE
-else
-CPPFLAGS=${CPPFLAGS_INITIAL}
+ifeq (${WIDE}, 1)
+	CPPFLAGS+= -DWIDE_MODE
+endif
+
+ifeq (${REDRAW}, 1)
+	CPPFLAGS+= -DFULL_REDRAW
 endif
 
 # Main program
 main: ${OBJECTS}
-	${CC} ${CFLAGS} ${CPPFLAGS} -DWIDE_MODE -o ${NAME} main.c ${OBJECTS} ${LIBS}
-
-# Thin version of main program
-thin: ${OBJECTS}
 	${CC} ${CFLAGS} ${CPPFLAGS} -o ${NAME} main.c ${OBJECTS} ${LIBS}
 
 inputWindow.o: inputWindow.c

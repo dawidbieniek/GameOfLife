@@ -69,6 +69,9 @@ void setMenuRefreshMutex(pthread_mutex_t* refreshMutex)
 void updateMenuWindow()
 {
     pthread_mutex_lock(menu_RefreshMutex);
+#ifdef FULL_REDRAW
+    redrawwin(menu_menuWindow);
+#endif
     wrefresh(menu_menuWindow);
     pthread_mutex_unlock(menu_RefreshMutex);
 }
@@ -92,6 +95,7 @@ int handleMenuInput(int ch)
                 selectedItemIndex = 0;
                 menu_driver(menu, REQ_FIRST_ITEM);
             }
+            updateMenuWindow();
             break;
         case KEY_UP:
             if(selectedItemIndex-- > 0)
@@ -103,13 +107,13 @@ int handleMenuInput(int ch)
                 selectedItemIndex = 12;
                 menu_driver(menu, REQ_LAST_ITEM);
             }
+            updateMenuWindow();
             break;
         case ' ':
         /* case KEY_ENTER: */
             return selectedItemIndex;
     }
 
-    updateMenuWindow();
     return -1;
 }
 
