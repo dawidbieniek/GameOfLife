@@ -60,6 +60,8 @@ pthread_mutex_t startGameThread(void (*threadFunction)(Board*, Ruleset*, int*, i
     pthread_mutex_init(&suspendedMutex, NULL);    
     pthread_mutex_init(&gameThread_refreshMutex, NULL);
 
+    pthread_cond_init(&resumeCondition, NULL);
+
     loopedFunction = threadFunction;
 
     gameThread_board = board;
