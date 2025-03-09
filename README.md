@@ -60,9 +60,6 @@ The Makefile supports optional flags:
 > make clean
 > ```
 
-## Screenshots
-Add screenshots of the application here for demonstration.
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [app-screenshot]: img/app.png
