@@ -25,7 +25,7 @@ A terminal-based simulation of Conway's Game of Life. The program is written in 
 * **State Persistence:** Save and load board states from files, allowing you to resume simulations.
 * **Speed Control:** Fine-tune simulation speed to slow down or accelerate the evolution of cellular patterns.
 * **Toggle Wrapping Mode:** Enable or disable board wrapping to alter edge behavior during simulation.
-* **Use built-in maps:** In `maps/` directory there already a few example map files that can be loaded into program.
+* **Use built-in maps:** In `maps/` directory there already a few example map files that can be loaded into program. Path to board file should start from program's directory (eg. maps/glider).
 
 ## Getting Started
 
