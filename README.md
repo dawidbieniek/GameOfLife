@@ -8,7 +8,7 @@
 ## About
 A terminal-based simulation of Conway's Game of Life. The program is written in ANSI C to run on QNX (real-time operating system) for one of university courses. It supports custom board sizes, rule modifications, and file-based board saving/loading.
 
-![Screenshot of application](https://placehold.co/600x400)
+![Screenshot of application][app-screenshot]
 
 ### Built With
 
@@ -65,7 +65,7 @@ Add screenshots of the application here for demonstration.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[app-screenshot]: https://placehold.co/600x400
+[app-screenshot]: img/app.png
 
 [c-badge]: https://img.shields.io/badge/ANSI_C-A8B9CC?style=for-the-badge&logo=C&logoColor=white
 [c-url]: https://en.wikipedia.org/wiki/ANSI_C
